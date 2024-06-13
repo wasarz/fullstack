@@ -2,6 +2,19 @@ import { useState, useEffect } from 'react'
 import personService from './services/persons'
 import axios from 'axios'
 
+const Notification = (props) => {
+  console.log(props)
+  if (props.message === null) {
+    return null
+  }
+
+  return (
+    <div className={props.style}>
+      {props.message}
+    </div>
+  )
+}
+
 const Person = ({ person, del }) => {
   return (
     <p>{person.name} {person.number + ' '}
@@ -42,6 +55,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [newFilter, setNewFilter] = useState('')
+  const [style, setStyle] = useState("alert")
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -52,6 +67,7 @@ const App = () => {
         setPersons(response.data)
       })
   }, [])
+
   console.log('render', persons.length, 'persons')
 
   const personsToShow = showAll
@@ -84,6 +100,14 @@ const App = () => {
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNumber('')
+          setStyle('alert')
+          setMessage(
+            `Added ${personObject.name}`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 3500)
+          
         })
     }
   }
@@ -97,8 +121,27 @@ const App = () => {
       .then(response => {
         setPersons(persons.map(p => p.id !== person.id ? p : response.data))
         setNewName('')
-      setNewNumber('')
+        setNewNumber('')
       })
+      .catch(error => {
+        setStyle('error')
+        setMessage(
+          `Information of ${person.name} doesn't exist!`
+        )
+        setTimeout(() =>  {
+          setMessage(null)
+        }, 3000)
+        setPersons(persons.filter(p => p.id !== person.id))
+        return
+      })
+      setStyle('alert')
+      setMessage(
+        `Updated ${person.name}'s number`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 3500)
+      
   }
 
   const handleNameChange = (event) => {
@@ -131,13 +174,20 @@ const App = () => {
            setPersons(persons.filter(p => p.id !== id))
            console.log(response)
       })
+      setStyle('alert')
+      setMessage(
+        `Deleted ${person.name}`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 3500)
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={message} style={style}/>
       <Filter newFilter={newFilter}
                    handleFilterChange={handleFilterChange} />
 

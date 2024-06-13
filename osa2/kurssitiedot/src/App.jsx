@@ -51,7 +51,8 @@ const App = () => {
     <div>
       <h1>Web development curriculum</h1>
       {courses.map(c =>
-        <Course course={c} />
+        <Course course={c} 
+                key={c.id} />
       )}
     </div>
   )

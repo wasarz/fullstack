@@ -1,6 +1,4 @@
   const Part = (props) => {
-    console.log('Part toimii')
-    console.log(props)
     return (
       <p>{props.part.name} {props.part.exercises}</p>
     )
@@ -14,12 +12,12 @@
   
   const Content = (props) => {
     console.log('Content toimii')
-    console.log(props)
     const { parts } = props
     return (
       <>
         {parts.map(p =>
-          <Part part={p} />
+          <Part part={p}
+                key={p.id} />
         )}
       </>
     )
